@@ -11,6 +11,8 @@
   "ignorePatterns": ["node_modules", "dist", "*.config.js", "*.config.cjs"],
   "plugins": ["@typescript-eslint", "prettier", "import"],
   "extends": [
+    "airbnb",
+    "airbnb-typescript",
     "eslint:recommended", 
     "plugin:@typescript-eslint/recommended",
     "plugin:prettier/recommended",
@@ -89,6 +91,8 @@
         }
       }
     ],
-    "import/default": "off"
+    "import/default": "off",
+    "react/jsx-filename-extension": [2, { "extensions": [".js", ".jsx", ".ts", ".tsx"] }],
+    "react/react-in-jsx-scope": "off"
   }
 }
