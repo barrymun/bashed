@@ -1,15 +1,15 @@
 .terminal {
   width: 100%;
+  position: relative;
 
   .user {
     position: absolute;
-    top: 0;
+    bottom: 0;
     left: 0;
     background-color: green;
   }
 
-  textarea {
-    resize: none;
+  input {
     border: none;
     width: calc(100% - 16px);
     padding: 8px;
