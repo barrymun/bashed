@@ -1,7 +1,12 @@
 import { Terminal } from "components";
+import { SettingsProvider } from "hooks";
 
 function App() {
-  return <Terminal />;
+  return (
+    <SettingsProvider>
+      <Terminal />
+    </SettingsProvider>
+  );
 }
 
 export default App;

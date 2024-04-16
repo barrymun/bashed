@@ -1,5 +1,19 @@
 .terminal {
+  width: 100%;
+
+  .user {
+    position: absolute;
+    top: 0;
+    left: 0;
+    background-color: green;
+  }
+
   textarea {
     resize: none;
+    border: none;
+    width: calc(100% - 16px);
+    padding: 8px;
+    user-select: none;
+    outline: none;
   }
 }
