@@ -1,8 +1,10 @@
 import { createContext, useContext, useMemo, useState } from "react";
 
+import { Command } from "utils";
+
 interface CommandsContextProps {
-  commands: string[];
-  setCommands: React.Dispatch<React.SetStateAction<string[]>>;
+  commands: Command[];
+  setCommands: React.Dispatch<React.SetStateAction<Command[]>>;
 }
 
 interface CommandsProviderProps {
@@ -15,7 +17,7 @@ const CommandsContext = createContext<CommandsContextProps>({
 });
 
 const CommandsProvider = ({ children }: CommandsProviderProps) => {
-  const [commands, setCommands] = useState<string[]>([]);
+  const [commands, setCommands] = useState<Command[]>([]);
 
   const value = useMemo(
     () => ({

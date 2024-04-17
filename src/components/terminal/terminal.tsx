@@ -3,7 +3,7 @@ import "./terminal.scss";
 import { FC, KeyboardEventHandler, createRef, useEffect, useMemo, useState } from "react";
 
 import { useCommands, useSettings } from "hooks";
-import { availableCommands } from "utils";
+import { Command, availableCommands } from "utils";
 
 interface TerminalProps {}
 
@@ -15,28 +15,32 @@ const Terminal: FC<TerminalProps> = () => {
 
   const ref = createRef<HTMLInputElement>();
 
-  const [text, setText] = useState<string>("");
+  const [input, setInput] = useState<string>("");
 
   const handleTab = () => {
-    if (text === "") {
+    if (input === "") {
       return;
     }
-    const formattedText = text.replace(prefix, "");
+    const formattedText = input.replace(prefix, "");
     for (const availableCommand of availableCommands) {
       if (availableCommand.startsWith(formattedText)) {
-        setText(`${availableCommand} `);
+        setInput(`${availableCommand} `);
         break;
       }
     }
   };
 
   const handleEnter = () => {
-    setCommands((prevCommands) => [...prevCommands, text]);
-    setText("");
+    let output: Command["output"] = null;
+    if (input === "history") {
+      output = commands.map((command) => command.input);
+    }
+    setCommands((prevCommands) => [...prevCommands, { input, output }]);
+    setInput("");
   };
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setText(event.target.value);
+    setInput(event.target.value);
   };
 
   const handleKeyDown: KeyboardEventHandler<HTMLInputElement> = (event) => {
@@ -62,14 +66,23 @@ const Terminal: FC<TerminalProps> = () => {
 
   return (
     <div className="terminal">
-      {commands.map((command, index) => (
-        <div key={index} className="command">
-          {prefix}
-          <span>{command}</span>
+      {commands.map((command, commandIndex) => (
+        <div key={commandIndex} className="command">
+          <div className="input">
+            <span>{prefix}</span>
+            <span>{command.input}</span>
+          </div>
+          {command.output && (
+            <div className="output">
+              {command.output.map((line, lineIndex) => (
+                <div key={lineIndex}>{line}</div>
+              ))}
+            </div>
+          )}
         </div>
       ))}
       <div className="user">{prefix}</div>
-      <input ref={ref} value={text} onChange={handleChange} onKeyDown={handleKeyDown} />
+      <input ref={ref} value={input} onChange={handleChange} onKeyDown={handleKeyDown} />
     </div>
   );
 };
