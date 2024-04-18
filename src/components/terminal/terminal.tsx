@@ -61,7 +61,7 @@ const Terminal: FC<TerminalProps> = () => {
     if (!ref.current) {
       return;
     }
-    ref.current.style.textIndent = `${prefix.length + 2}ch`;
+    ref.current.style.textIndent = `${prefix.length - 1.5}ch`; // subtract to account for space chars
   }, [prefix]);
 
   return (
