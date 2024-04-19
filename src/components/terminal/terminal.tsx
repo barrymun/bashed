@@ -57,12 +57,25 @@ const Terminal: FC<TerminalProps> = () => {
     }
   };
 
+  /**
+   * set cursor starting position
+   */
   useEffect(() => {
     if (!ref.current) {
       return;
     }
     ref.current.style.textIndent = `${prefix.length - 1.5}ch`; // subtract to account for space chars
   }, [prefix]);
+
+  /**
+   * focus on input when component mounts
+   */
+  useEffect(() => {
+    if (!ref.current) {
+      return;
+    }
+    ref.current.focus();
+  }, [ref]);
 
   return (
     <div className="terminal">
