@@ -2,16 +2,16 @@ import "./terminal.scss";
 
 import { FC, KeyboardEventHandler, createRef, useEffect, useMemo, useState } from "react";
 
-import { useCommands, useSettings } from "hooks";
+import { useSettings, useTerminalSession } from "hooks";
 import { Command, availableCommands } from "utils";
 
 interface TerminalProps {}
 
 const Terminal: FC<TerminalProps> = () => {
   const { user } = useSettings();
-  const { commands, setCommands } = useCommands();
+  const { cwd, commands, setCommands } = useTerminalSession();
 
-  const prefix = useMemo(() => `${user}:~$ `, [user]);
+  const prefix = useMemo(() => `${user}@localhost:${cwd}$`, [user, cwd]);
 
   const ref = createRef<HTMLTextAreaElement>();
 

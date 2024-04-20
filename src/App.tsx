@@ -1,12 +1,12 @@
 import { Terminal } from "components";
-import { CommandsProvider, SettingsProvider } from "hooks";
+import { SettingsProvider, TerminalSessionProvider } from "hooks";
 
 function App() {
   return (
     <SettingsProvider>
-      <CommandsProvider>
+      <TerminalSessionProvider>
         <Terminal />
-      </CommandsProvider>
+      </TerminalSessionProvider>
     </SettingsProvider>
   );
 }

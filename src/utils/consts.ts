@@ -1,4 +1,6 @@
 export const defaultUser = "ubuntu";
+export const homeDirectory = "~";
+export const defaultDirectories = { [homeDirectory]: [] };
 export const availableCommands: string[] = [
   "cat",
   "less",
