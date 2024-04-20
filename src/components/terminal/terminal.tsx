@@ -11,9 +11,9 @@ const Terminal: FC<TerminalProps> = () => {
   const { user } = useSettings();
   const { commands, setCommands } = useCommands();
 
-  const prefix = useMemo(() => `${user}@ubuntu:~$ `, [user]);
+  const prefix = useMemo(() => `${user}:~$ `, [user]);
 
-  const ref = createRef<HTMLInputElement>();
+  const ref = createRef<HTMLTextAreaElement>();
 
   const [input, setInput] = useState<string>("");
 
@@ -30,27 +30,28 @@ const Terminal: FC<TerminalProps> = () => {
     }
   };
 
-  const handleEnter = () => {
+  const handleEnter: KeyboardEventHandler<HTMLTextAreaElement> = (event) => {
+    event.preventDefault();
     let output: Command["output"] = null;
-    if (input === "history") {
+    if (input.trim() === "history") {
       output = commands.map((command) => command.input);
     }
     setCommands((prevCommands) => [...prevCommands, { input, output }]);
     setInput("");
   };
 
-  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
     setInput(event.target.value);
   };
 
-  const handleKeyDown: KeyboardEventHandler<HTMLInputElement> = (event) => {
+  const handleKeyDown: KeyboardEventHandler<HTMLTextAreaElement> = (event) => {
     switch (event.key) {
       case "Tab":
         event.preventDefault();
         handleTab();
         break;
       case "Enter":
-        handleEnter();
+        handleEnter(event);
         break;
       default:
         break;
@@ -64,7 +65,7 @@ const Terminal: FC<TerminalProps> = () => {
     if (!ref.current) {
       return;
     }
-    ref.current.style.textIndent = `${prefix.length - 1.5}ch`; // subtract to account for space chars
+    ref.current.style.textIndent = `${prefix.length}ch`; // subtract to account for space chars
   }, [prefix]);
 
   /**
@@ -94,8 +95,10 @@ const Terminal: FC<TerminalProps> = () => {
           )}
         </div>
       ))}
-      <div className="user">{prefix}</div>
-      <input ref={ref} value={input} onChange={handleChange} onKeyDown={handleKeyDown} />
+      <div className="working-area">
+        <div className="user">{prefix}</div>
+        <textarea ref={ref} value={input} onChange={handleChange} onKeyDown={handleKeyDown} />
+      </div>
     </div>
   );
 };

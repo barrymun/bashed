@@ -1,20 +1,23 @@
 .terminal {
   width: 100%;
-  position: relative;
 
-  .user {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    margin-bottom: 5px;
-  }
-
-  input {
-    border: none;
-    width: calc(100% - 16px);
-    padding: 8px;
-    user-select: none;
-    outline: none;
-    font-size: inherit;
+  .working-area {
+    position: relative;
+    
+    .user {
+      position: absolute;
+      top: 4px;
+      left: 0;
+    }
+  
+    textarea {
+      resize: none;
+      border: none;
+      width: calc(100% - 16px);
+      padding: 8px;
+      user-select: none;
+      outline: none;
+      font-size: inherit;
+    }
   }
 }
