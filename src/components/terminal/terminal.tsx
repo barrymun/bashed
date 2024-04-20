@@ -2,6 +2,7 @@ import "./terminal.scss";
 
 import { FC, KeyboardEventHandler, createRef, useEffect, useMemo, useState } from "react";
 
+import { EditUserDialog } from "components/dialog";
 import { useSettings, useTerminalSession } from "hooks";
 import { Command, availableCommands } from "utils";
 
@@ -16,6 +17,7 @@ const Terminal: FC<TerminalProps> = () => {
   const ref = createRef<HTMLTextAreaElement>();
 
   const [input, setInput] = useState<string>("");
+  const [isDialogOpen, setIsDialogOpen] = useState<boolean>(false);
 
   const handleTab = () => {
     if (input === "") {
@@ -96,9 +98,12 @@ const Terminal: FC<TerminalProps> = () => {
         </div>
       ))}
       <div className="working-area">
-        <div className="user">{prefix}</div>
+        <button type="button" className="user" onClick={() => setIsDialogOpen(true)}>
+          {prefix}
+        </button>
         <textarea ref={ref} value={input} onChange={handleChange} onKeyDown={handleKeyDown} />
       </div>
+      <EditUserDialog open={isDialogOpen} defaultValue={user} handleClose={() => setIsDialogOpen(false)} />
     </div>
   );
 };
