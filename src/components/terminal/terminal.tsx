@@ -10,9 +10,9 @@ interface TerminalProps {}
 
 const Terminal: FC<TerminalProps> = () => {
   const { user } = useSettings();
-  const { cwd, commands, setCommands } = useTerminalSession();
+  const { directoryTree, commands, setCommands } = useTerminalSession();
 
-  const prefix = useMemo(() => `${user}@localhost:${cwd}$`, [user, cwd]);
+  const prefix = useMemo(() => `${user}@localhost:${directoryTree.cwd.name}$`, [user, directoryTree.cwd]);
 
   const ref = createRef<HTMLTextAreaElement>();
 
@@ -35,10 +35,21 @@ const Terminal: FC<TerminalProps> = () => {
   const handleEnter: KeyboardEventHandler<HTMLTextAreaElement> = (event) => {
     event.preventDefault();
     let output: Command["output"] = null;
+    let wasCleared = false;
     if (input.trim() === "history") {
       output = commands.map((command) => command.input);
+    } else if (input.trim() === "clear") {
+      wasCleared = true;
+      setCommands([]);
+    } else if (input.trim() === "pwd") {
+      output = [directoryTree.cwd.name];
+    } else if (input.trim() === "cd") {
+      // TODO: need to split the commands into parts
+      setIsDialogOpen(true);
     }
-    setCommands((prevCommands) => [...prevCommands, { input, output }]);
+    if (!wasCleared) {
+      setCommands((prevCommands) => [...prevCommands, { input, output }]);
+    }
     setInput("");
   };
 

@@ -1,10 +1,10 @@
 import { createContext, useContext, useMemo, useState } from "react";
 
-import { Command, defaultDirectories, homeDirectory } from "utils";
+import { DirectoryTree } from "lib/directory-structure/directory-tree";
+import { Command } from "utils";
 
 interface TerminalSessionContextProps {
-  directories: Record<string, string[]>;
-  cwd: keyof TerminalSessionContextProps["directories"];
+  directoryTree: DirectoryTree;
   commands: Command[];
   setCommands: React.Dispatch<React.SetStateAction<Command[]>>;
 }
@@ -14,27 +14,23 @@ interface TerminalSessionProviderProps {
 }
 
 const TerminalSessionContext = createContext<TerminalSessionContextProps>({
-  directories: defaultDirectories,
-  cwd: homeDirectory,
+  directoryTree: {} as DirectoryTree,
   commands: [],
   setCommands: () => {},
 });
 
 const TerminalSessionProvider = ({ children }: TerminalSessionProviderProps) => {
-  const [directories, setDirectories] = useState<TerminalSessionContextProps["directories"]>(defaultDirectories);
-  const [cwd, setCwd] = useState<TerminalSessionContextProps["cwd"]>(homeDirectory);
+  const [directoryTree, setDirectoryTree] = useState<TerminalSessionContextProps["directoryTree"]>(new DirectoryTree());
   const [commands, setCommands] = useState<TerminalSessionContextProps["commands"]>([]);
 
   const value = useMemo(
     () => ({
-      directories,
-      cwd,
+      directoryTree,
       commands,
-      setDirectories,
-      setCwd,
+      setDirectoryTree,
       setCommands,
     }),
-    [directories, cwd, commands, setDirectories, setCwd, setCommands],
+    [directoryTree, commands, setDirectoryTree, setCommands],
   );
 
   return <TerminalSessionContext.Provider value={value}>{children}</TerminalSessionContext.Provider>;
