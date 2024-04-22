@@ -18,8 +18,6 @@ export class DirectoryTree {
       this.root = newNode;
     } else if (parent) {
       parent.addChild(newNode);
-    } else {
-      // console.error("Parent node is required for adding a child node.");
     }
   }
 }
