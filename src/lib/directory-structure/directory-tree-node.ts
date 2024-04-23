@@ -12,6 +12,6 @@ export class DirectoryTreeNode {
   }
 
   addChild(child: DirectoryTreeNode) {
-    this.children.push(child);
+    this.children = [...this.children, child];
   }
 }

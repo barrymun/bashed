@@ -10,7 +10,7 @@ interface TerminalProps {}
 
 const Terminal: FC<TerminalProps> = () => {
   const { user } = useSettings();
-  const { directoryTree, commands, setCommands } = useTerminalSession();
+  const { directoryTree, commands, setDirectoryTree, setCommands } = useTerminalSession();
 
   const prefix = useMemo(() => `${user}@localhost:${directoryTree.cwd.name}$`, [user, directoryTree.cwd]);
 
@@ -43,6 +43,9 @@ const Terminal: FC<TerminalProps> = () => {
       setCommands([]);
     } else if (input.trim() === "pwd") {
       output = [directoryTree.cwd.name];
+    } else if (input.trim() === "mkdir") {
+      directoryTree.add("test", directoryTree.cwd);
+      setDirectoryTree(directoryTree);
     } else if (input.trim() === "cd") {
       // TODO: need to split the commands into parts
       setIsDialogOpen(true);

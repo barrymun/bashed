@@ -6,6 +6,7 @@ import { Command } from "utils";
 interface TerminalSessionContextProps {
   directoryTree: DirectoryTree;
   commands: Command[];
+  setDirectoryTree: React.Dispatch<React.SetStateAction<DirectoryTree>>;
   setCommands: React.Dispatch<React.SetStateAction<Command[]>>;
 }
 
@@ -16,6 +17,7 @@ interface TerminalSessionProviderProps {
 const TerminalSessionContext = createContext<TerminalSessionContextProps>({
   directoryTree: {} as DirectoryTree,
   commands: [],
+  setDirectoryTree: () => {},
   setCommands: () => {},
 });
 
