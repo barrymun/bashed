@@ -1,6 +1,19 @@
 import { DirectoryTree } from "lib/directory-structure";
 import { Command, availableCommands } from "utils";
 
+// interface InputProps {
+//   input: string;
+//   commands: Command[];
+//   directoryTree: DirectoryTree;
+// }
+
+// interface ReturnProps {
+//   output: Command["output"];
+//   wasCleared: boolean;
+//   commands: Command[];
+//   directoryTree: DirectoryTree;
+// }
+
 export function extrapolate({
   input,
   commands,
@@ -18,14 +31,12 @@ export function extrapolate({
   let output: Command["output"] = null;
   let wasCleared = false;
   let updatedCommands = [...commands];
-  let updatedDirectoryTree = directoryTree;
+  const updatedDirectoryTree = directoryTree;
 
   const keywords = input.trim().split(" ");
   if (keywords.length === 0) {
     return { output, wasCleared, commands: updatedCommands, directoryTree: updatedDirectoryTree };
   }
-
-  const newCwd = directoryTree.cwd.directories.find((d) => d.name === keywords[1]);
 
   const command = keywords[0] as (typeof availableCommands)[number];
   switch (command) {
@@ -44,22 +55,29 @@ export function extrapolate({
         output = ["Invalid number of arguments"];
         break;
       }
-      directoryTree.add(keywords[1], directoryTree.cwd);
-      updatedDirectoryTree = directoryTree;
+      updatedDirectoryTree.add(keywords[1], directoryTree.cwd);
       break;
     case "ls":
       output = [...directoryTree.cwd.directories.map((d) => d.name), ...directoryTree.cwd.files.map((f) => f.name)];
       break;
     case "cd":
-      if (keywords.length !== 2) {
-        output = ["Invalid number of arguments"];
-        break;
+      switch (keywords.length) {
+        case 1:
+          updatedDirectoryTree.cwd = directoryTree.root;
+          break;
+        case 2:
+          // eslint-disable-next-line no-case-declarations
+          const newCwd = directoryTree.cwd.directories.find((d) => d.name === keywords[1]);
+          if (!newCwd) {
+            output = ["Directory not found"];
+            break;
+          }
+          updatedDirectoryTree.cwd = newCwd;
+          break;
+        default:
+          output = ["Invalid number of arguments"];
+          break;
       }
-      if (!newCwd) {
-        output = ["Directory not found"];
-        break;
-      }
-      updatedDirectoryTree = { ...directoryTree, cwd: newCwd } as DirectoryTree;
       break;
     default:
       break;
@@ -68,21 +86,4 @@ export function extrapolate({
     updatedCommands = [...commands, { input, output }];
   }
   return { output, wasCleared, commands: updatedCommands, directoryTree: updatedDirectoryTree };
-  // if (input.trim() === "history") {
-  //   output = commands.map((command) => command.input);
-  // } else if (input.trim() === "clear") {
-  //   wasCleared = true;
-  //   setCommands([]);
-  // } else if (input.trim() === "pwd") {
-  //   output = [directoryTree.cwd.name];
-  // } else if (input.trim() === "mkdir") {
-  //   directoryTree.add("test", directoryTree.cwd);
-  //   setDirectoryTree(directoryTree);
-  // } else if (input.trim() === "cd") {
-  //   // TODO: need to split the commands into parts
-  //   setIsDialogOpen(true);
-  // }
-  // if (!wasCleared) {
-  //   setCommands((prevCommands) => [...prevCommands, { input, output }]);
-  // }
 }
