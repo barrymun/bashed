@@ -25,6 +25,8 @@ export function extrapolate({
     return { output, wasCleared, commands: updatedCommands, directoryTree: updatedDirectoryTree };
   }
 
+  const newCwd = directoryTree.cwd.directories.find((d) => d.name === keywords[1]);
+
   const command = keywords[0] as (typeof availableCommands)[number];
   switch (command) {
     case "history":
@@ -38,8 +40,26 @@ export function extrapolate({
       output = [directoryTree.cwd.name];
       break;
     case "mkdir":
-      directoryTree.add("test", directoryTree.cwd);
+      if (keywords.length !== 2) {
+        output = ["Invalid number of arguments"];
+        break;
+      }
+      directoryTree.add(keywords[1], directoryTree.cwd);
       updatedDirectoryTree = directoryTree;
+      break;
+    case "ls":
+      output = [...directoryTree.cwd.directories.map((d) => d.name), ...directoryTree.cwd.files.map((f) => f.name)];
+      break;
+    case "cd":
+      if (keywords.length !== 2) {
+        output = ["Invalid number of arguments"];
+        break;
+      }
+      if (!newCwd) {
+        output = ["Directory not found"];
+        break;
+      }
+      updatedDirectoryTree = { ...directoryTree, cwd: newCwd } as DirectoryTree;
       break;
     default:
       break;
