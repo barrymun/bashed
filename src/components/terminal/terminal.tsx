@@ -4,7 +4,8 @@ import { FC, KeyboardEventHandler, createRef, useEffect, useMemo, useState } fro
 
 import { EditUserDialog } from "components/dialog";
 import { useSettings, useTerminalSession } from "hooks";
-import { Command, availableCommands } from "utils";
+import { extrapolate } from "lib/terminal";
+import { availableCommands } from "utils";
 
 interface TerminalProps {}
 
@@ -34,26 +35,14 @@ const Terminal: FC<TerminalProps> = () => {
 
   const handleEnter: KeyboardEventHandler<HTMLTextAreaElement> = (event) => {
     event.preventDefault();
-    let output: Command["output"] = null;
-    let wasCleared = false;
-    if (input.trim() === "history") {
-      output = commands.map((command) => command.input);
-    } else if (input.trim() === "clear") {
-      wasCleared = true;
-      setCommands([]);
-    } else if (input.trim() === "pwd") {
-      output = [directoryTree.cwd.name];
-    } else if (input.trim() === "mkdir") {
-      directoryTree.add("test", directoryTree.cwd);
-      setDirectoryTree(directoryTree);
-    } else if (input.trim() === "cd") {
-      // TODO: need to split the commands into parts
-      setIsDialogOpen(true);
-    }
-    if (!wasCleared) {
-      setCommands((prevCommands) => [...prevCommands, { input, output }]);
-    }
+    const response = extrapolate({
+      input,
+      commands,
+      directoryTree,
+    });
     setInput("");
+    setCommands(response.commands);
+    setDirectoryTree(response.directoryTree);
   };
 
   const handleChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {

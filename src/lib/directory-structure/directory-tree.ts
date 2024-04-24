@@ -7,6 +7,8 @@ export class DirectoryTree {
   cwd: DirectoryTreeNode;
 
   constructor() {
+    this.add = this.add.bind(this);
+
     const rootNode = new DirectoryTreeNode(homeDirectory);
     this.root = rootNode;
     this.cwd = rootNode;

@@ -6,6 +6,8 @@ export class DirectoryTreeNode {
   children: DirectoryTreeNode[];
 
   constructor(name: string) {
+    this.addChild = this.addChild.bind(this);
+
     this.name = name;
     this.files = [];
     this.children = [];
