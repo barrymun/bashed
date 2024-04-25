@@ -4,7 +4,7 @@ import { FC, KeyboardEventHandler, createRef, useEffect, useMemo, useState } fro
 
 import { EditUserDialog } from "components/dialog";
 import { useSettings, useTerminalSession } from "hooks";
-import { extrapolate } from "lib/terminal";
+import { CommandHandler } from "lib/terminal";
 import { availableCommands } from "utils";
 
 interface TerminalProps {}
@@ -35,12 +35,13 @@ const Terminal: FC<TerminalProps> = () => {
 
   const handleEnter: KeyboardEventHandler<HTMLTextAreaElement> = (event) => {
     event.preventDefault();
-    const response = extrapolate({
+    const commandHandler = new CommandHandler({
       prefix,
       input,
       commands,
       directoryTree,
     });
+    const response = commandHandler.extrapolate();
     setInput("");
     setCommands(response.commands);
     setDirectoryTree(response.directoryTree);
