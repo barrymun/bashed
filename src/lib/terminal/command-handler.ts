@@ -15,27 +15,28 @@ import { Command, availableCommands } from "utils";
 // }
 
 export function extrapolate({
+  prefix,
   input,
   commands,
   directoryTree,
 }: {
+  prefix: string;
   input: string;
   commands: Command[];
   directoryTree: DirectoryTree;
 }): {
-  output: Command["output"];
-  wasCleared: boolean;
   commands: Command[];
   directoryTree: DirectoryTree;
 } {
+  const formattedInput = `${prefix} ${input}`.trim();
   let output: Command["output"] = null;
   let wasCleared = false;
-  let updatedCommands = [...commands];
+  let updatedCommands = [...commands, { input: formattedInput, output: null }];
   const updatedDirectoryTree = directoryTree;
 
   const keywords = input.trim().split(" ");
   if (keywords.length === 0) {
-    return { output, wasCleared, commands: updatedCommands, directoryTree: updatedDirectoryTree };
+    return { commands: updatedCommands, directoryTree: updatedDirectoryTree };
   }
 
   const command = keywords[0] as (typeof availableCommands)[number];
@@ -45,7 +46,7 @@ export function extrapolate({
       break;
     case "clear":
       wasCleared = true;
-      updatedCommands = [];
+      updatedCommands = [{ input: formattedInput, output: null }];
       break;
     case "pwd":
       output = [directoryTree.cwd.name];
@@ -80,10 +81,11 @@ export function extrapolate({
       }
       break;
     default:
+      output = ["Command not found"];
       break;
   }
   if (!wasCleared) {
-    updatedCommands = [...commands, { input, output }];
+    updatedCommands = [...commands, { input: formattedInput, output }];
   }
-  return { output, wasCleared, commands: updatedCommands, directoryTree: updatedDirectoryTree };
+  return { commands: updatedCommands, directoryTree: updatedDirectoryTree };
 }

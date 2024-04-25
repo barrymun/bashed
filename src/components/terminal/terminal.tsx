@@ -36,6 +36,7 @@ const Terminal: FC<TerminalProps> = () => {
   const handleEnter: KeyboardEventHandler<HTMLTextAreaElement> = (event) => {
     event.preventDefault();
     const response = extrapolate({
+      prefix,
       input,
       commands,
       directoryTree,
@@ -88,7 +89,7 @@ const Terminal: FC<TerminalProps> = () => {
       {commands.map((command, commandIndex) => (
         <div key={commandIndex} className="command">
           <div className="input">
-            <span>{prefix}</span>
+            {/* <span>{prefix}</span> */}
             <span>{command.input}</span>
           </div>
           {command.output && (
