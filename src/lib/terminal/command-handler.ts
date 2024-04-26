@@ -15,9 +15,9 @@ class CommandHandler {
 
   output: Command["output"];
 
-  wasCleared: boolean;
+  wasCleared: boolean; // "clear" command was used
 
-  formattedInput: string;
+  formattedInput: string; // concatenation of prefix and input
 
   keywords: string[];
 
@@ -37,6 +37,53 @@ class CommandHandler {
     }
   }
 
+  private handleHistory() {
+    this.output = this.commands.map((c) => c.input);
+  }
+
+  private handleClear() {
+    this.wasCleared = true;
+    this.commands = [{ input: this.formattedInput, output: null }];
+  }
+
+  private handlePwd() {
+    this.output = [this.directoryTree.cwd.name];
+  }
+
+  private handleCd() {
+    const newCwd = this.directoryTree.cwd.directories.find((d) => d.name === this.keywords[1]);
+    switch (this.keywords.length) {
+      case 1:
+        this.directoryTree.cwd = this.directoryTree.root;
+        break;
+      case 2:
+        if (!newCwd) {
+          this.output = ["Directory not found"];
+          break;
+        }
+        this.directoryTree.cwd = newCwd;
+        break;
+      default:
+        this.output = ["Invalid number of arguments"];
+        break;
+    }
+  }
+
+  private handleMkdir() {
+    if (this.keywords.length !== 2) {
+      this.output = ["Invalid number of arguments"];
+      return;
+    }
+    this.directoryTree.add(this.keywords[1], this.directoryTree.cwd);
+  }
+
+  private handleLs() {
+    this.output = [
+      ...this.directoryTree.cwd.directories.map((d) => d.name),
+      ...this.directoryTree.cwd.files.map((f) => f.name),
+    ];
+  }
+
   public extrapolate() {
     if (!this.command || this.keywords.length === 0) {
       return {
@@ -47,54 +94,32 @@ class CommandHandler {
 
     switch (this.command) {
       case "history":
-        this.output = this.commands.map((c) => c.input);
+        this.handleHistory();
         break;
       case "clear":
-        this.wasCleared = true;
-        this.commands = [{ input: this.formattedInput, output: null }];
+        this.handleClear();
         break;
       case "pwd":
-        this.output = [this.directoryTree.cwd.name];
-        break;
-      case "mkdir":
-        if (this.keywords.length !== 2) {
-          this.output = ["Invalid number of arguments"];
-          break;
-        }
-        this.directoryTree.add(this.keywords[1], this.directoryTree.cwd);
-        break;
-      case "ls":
-        this.output = [
-          ...this.directoryTree.cwd.directories.map((d) => d.name),
-          ...this.directoryTree.cwd.files.map((f) => f.name),
-        ];
+        this.handlePwd();
         break;
       case "cd":
-        switch (this.keywords.length) {
-          case 1:
-            this.directoryTree.cwd = this.directoryTree.root;
-            break;
-          case 2:
-            // eslint-disable-next-line no-case-declarations
-            const newCwd = this.directoryTree.cwd.directories.find((d) => d.name === this.keywords[1]);
-            if (!newCwd) {
-              this.output = ["Directory not found"];
-              break;
-            }
-            this.directoryTree.cwd = newCwd;
-            break;
-          default:
-            this.output = ["Invalid number of arguments"];
-            break;
-        }
+        this.handleCd();
+        break;
+      case "mkdir":
+        this.handleMkdir();
+        break;
+      case "ls":
+        this.handleLs();
         break;
       default:
         this.output = ["Command not found"];
         break;
     }
+
     if (!this.wasCleared) {
       this.commands = [...this.commands, { input: this.formattedInput, output: this.output }];
     }
+
     return { commands: this.commands, directoryTree: this.directoryTree };
   }
 }
