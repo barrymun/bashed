@@ -1,4 +1,4 @@
-import { DirectoryTree } from "lib/directory-structure";
+import { DirectoryTree, getPathFromNode } from "lib/directory-structure";
 import { Command, availableCommands } from "utils";
 
 interface CommandHandlerProps {
@@ -47,7 +47,7 @@ class CommandHandler {
   }
 
   private handlePwd() {
-    this.output = [this.directoryTree.cwd.name];
+    this.output = [getPathFromNode(this.directoryTree.cwd)];
   }
 
   private handleCd() {
@@ -74,7 +74,7 @@ class CommandHandler {
       this.output = ["Invalid number of arguments"];
       return;
     }
-    this.directoryTree.add(this.keywords[1], this.directoryTree.cwd);
+    this.directoryTree.add({ parent: this.directoryTree.cwd, name: this.keywords[1] });
   }
 
   private handleLs() {

@@ -9,13 +9,13 @@ export class DirectoryTree {
   constructor() {
     this.add = this.add.bind(this);
 
-    const rootNode = new DirectoryTreeNode(homeDirectory);
+    const rootNode = new DirectoryTreeNode({ parent: null, name: homeDirectory });
     this.root = rootNode;
     this.cwd = rootNode;
   }
 
-  add(name: string, parent: DirectoryTreeNode) {
-    const newNode = new DirectoryTreeNode(name);
+  add({ parent, name }: { parent: DirectoryTreeNode; name: string }) {
+    const newNode = new DirectoryTreeNode({ parent: this.cwd, name });
     if (!this.root) {
       this.root = newNode;
     } else if (parent) {
